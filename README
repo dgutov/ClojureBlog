@@ -2,7 +2,7 @@
 
 The blog is written in the Rails-like style. It utilizes the following principles:
 1) MVC architecture;
-2) RESTfull design;
+2) RESTful design;
 3) Convention over configuration;
 4) DRY (Don't repeat yourself);
 5) Instant gratification.
@@ -10,10 +10,10 @@ The blog is written in the Rails-like style. It utilizes the following principle
 ## Architecture overview
 
 The directory structure is the following:
-blog/templates -- root directory for views. It contains subdirrectories for each
+blog/templates -- root directory for views. It contains subdirectories for each
 		  entity (post, comment, user) and the common application templates
 		  located in the dirrectory app.
-blog/src/blog/system -- contains the common functionality (utils.clj), databse
+blog/src/blog/system -- contains the common functionality (utils.clj), database
 		  connectivity options (db.clj), and the router (routes.clj).
 blog/src/blog/controllers -- directory for controllers.
 blog/src/blog/model -- directory for models.
@@ -21,8 +21,8 @@ blog/src/blog/model -- directory for models.
 Controller here contains all the business logic. It accepts the user input,
 interacts with the database and renders a response (or redirects to another page).
 
-Model is just a means of interecting with the database. It contains functions for
-confinient fetching the entities, creating/updating/deleting them.
+Model is just a means of interacting with the database. It contains functions for
+convenient fetching of entities, creating/updating/deleting them.
 
 Views are implemented using the clj-soy library which is a wrapper over the
 Google Closure Templates. More documentation and usage examples are here:
@@ -36,7 +36,7 @@ Just follow some advises.
 1) Do not dig deeply into system/utils.clj. It is a bit complicated and should be
 used "as-is". For those who are interested in it -- it has good comments and usage examples.
 
-2) Define routes for your RESTfull action using the "route" macro:
+2) Define routes for your RESTful action using the "route" macro:
 E.g. (route GET "/post/show/:id" post/show)
 It has the following syntax: (route <GET/POST> <page_address> <controller_function>).
 Define all the URL-parameters as keywords (:id -- is the parameter here).
@@ -52,7 +52,7 @@ In this case there are three local variables available inside the created functi
 You don't need to destructure the parameters manually. The "defaction" macro will process all the parameters
 in the vector and destructure them automatically.
 
-4) Use the "render-action" macro to render a RESTfull action. It has the following format:
+4) Use the "render-action" macro to render a RESTful action. It has the following format:
 (render-action <entity>#<action> <parameters>)
 For example:
 (render-action post#show
