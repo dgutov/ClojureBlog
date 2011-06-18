@@ -59,8 +59,7 @@
 (defaction update []
   (check-auth
    (post/update params)
-   (with-session {}
-     (redirect-to (str "/post/show/" (:id params))))))
+   (redirect-to (str "/post/show/" (:id params)))))
 
 ;; Action /post/delete/:id is requested via GET.
 ;; It checks whether the user is authenticated

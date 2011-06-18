@@ -4,7 +4,7 @@
 	compojure.core)
     (:require [clj-soy.template :as soy]))
 
-(def ^{:doc "The name of the directory where the teplates can be found"}
+(def ^{:doc "The name of the directory where the templates can be found"}
   *templates* "templates")
 
 (defn ^{:doc "Just a syntax sugar for ring.util.response/redirect"}
@@ -102,10 +102,8 @@ Outcome: (defn create [{session :session, {post_id :post_id} :params, params :pa
 (println post_id))
 Inside the generated function create there will be three local variables available:
 session, params and post_id."}
-  defaction [name & params-with-body]
-  (let [params-vector (first params-with-body)
-	params-hash (apply hash-map (flatten (map (fn [p] [p (keyword p)]) params-vector)))
-	body (next params-with-body)
+  defaction [name params-vector & body]
+  (let [params-hash (apply hash-map (flatten (map (fn [p] [p (keyword p)]) params-vector)))
 	session (symbol "session")
 	params (symbol "params")]
     `(defn ~name [{~params-hash :params, ~params :params,  ~session :session}]
@@ -125,11 +123,10 @@ session, params and post_id."}
 If there is such a field, then it evaluates the body. Otherwise it
 redirects to the home page."}
   check-auth [& body]
-  (let [session (symbol "session")]
-    `(let [user# (:user ~session)]
-       (if (empty? user#)
-	 (redirect-to "/")
-	 (do ~@body)))))
+  `(let [user# (:user ~'session)]
+     (if (empty? user#)
+       (redirect-to "/")
+       (do ~@body))))
 
 (defn ^{:doc "Parse the string as an int"}
   parse-int [s]
