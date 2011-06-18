@@ -130,3 +130,8 @@ redirects to the home page."}
        (if (empty? user#)
 	 (redirect-to "/")
 	 (do ~@body)))))
+
+(defn ^{:doc "Parse the string as an int"}
+  parse-int [s]
+  (try (Integer/parseInt s)
+       (catch NumberFormatException e 0)))

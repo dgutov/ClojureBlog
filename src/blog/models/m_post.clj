@@ -1,6 +1,6 @@
 (ns blog.models.m-post
   (:use blog.system.db
-	blog.system.utils)
+	[blog.system.utils :rename {parse-int pint}])
   (:require [clojure.contrib.sql :as sql]))
 
 (defn fetch-list []
@@ -22,14 +22,14 @@
   (struct-map->soy
    (sql/with-connection *db*
      (sql/with-query-results post
-       [(str "SELECT * FROM post where id = " id)]
-       (first (doall post))))))
+       ["SELECT * FROM post where id = ?" (pint id)]
+       (first post)))))
 
 (defn update [post]
   (sql/with-connection *db*
-    (sql/update-values "post" [(str "id=" (:id post))] post)))
+    (sql/update-values "post" ["id = ?" (pint (:id post))]
+                       (select-keys post [:title :body]))))
 
 (defn delete [id]
   (sql/with-connection *db*
-    (sql/delete-rows "post" [(str "id=" id)])))
-
+    (sql/delete-rows "post" ["id = ?" (pint id)])))

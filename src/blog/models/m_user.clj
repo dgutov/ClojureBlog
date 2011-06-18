@@ -7,6 +7,6 @@
   (struct-map->soy
    (sql/with-connection *db*
      (sql/with-query-results post
-       [(str "SELECT * FROM blog_user where name = '" name "' and password = '" password "'")]
+       ["SELECT * FROM blog_user where name = ? and password = ?" name password]
        (first (doall post))))))
 
