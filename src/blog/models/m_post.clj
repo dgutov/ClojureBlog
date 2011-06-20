@@ -4,11 +4,10 @@
   (:require [clojure.contrib.sql :as sql]))
 
 (defn fetch-list []
-  (doall
-   (sql/with-connection *db*
-     (sql/with-query-results posts
-       ["SELECT * FROM post order by id desc"]
-       (doall posts)))))
+  (sql/with-connection *db*
+    (sql/with-query-results posts
+      ["SELECT * FROM post order by id desc"]
+      (or (doall posts) '()))))
 
 (defn create [post]
   (sql/with-connection *db*

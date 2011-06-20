@@ -7,7 +7,7 @@
   (sql/with-connection *db*
     (sql/with-query-results comments
       ["SELECT * FROM comment where post_id = ? order by id desc" (pint post-id)]
-      (doall comments))))
+      (or (doall comments) '()))))
 
 (defn create [comment]
   (sql/with-connection *db*
