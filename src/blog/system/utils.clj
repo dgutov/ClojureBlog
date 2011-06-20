@@ -2,7 +2,9 @@
   "The namespace contains common functionality."
   (:use ring.util.response,
 	compojure.core)
-    (:require [clj-soy.template :as soy]))
+  (:require [clj-soy.template :as soy]
+            [clojure.walk :as walk])
+  (:import com.google.template.soy.data.SoyMapData))
 
 (def ^{:doc "The name of the directory where the templates can be found"}
   *templates* "templates")
@@ -10,25 +12,6 @@
 (defn ^{:doc "Just a syntax sugar for ring.util.response/redirect"}
   redirect-to [addr]
   (ring.util.response/redirect addr))
-
-(defn ^{:doc "When you pass nested parameters to clj-soy, you should
-transform your map substituting the keys with strings.
-The macros map->soy does this: (map->soy {:a 1, :b 2})
-returns {\"a\" 1, \"b\" 2}."}
-  map->soy [my-map]		;; Assume my-map contains {:a 1, :b 2}			
-  (let [map-keys (keys my-map)	;; map-keys = (:a :b)
-	string-keys (map #(subs (str %) 1) map-keys)	;; string-keys = ("a" "b")
-	map-string-keys (reduce				;; map-string-keys = {:b "b", :a "a"}
-			 (fn [m v]
-			   (assoc m (first v) (second v))) {}
-			   (map (fn [v1 v2] [v1 v2]) map-keys string-keys))
-	updated-map (clojure.set/rename-keys my-map map-string-keys)]	;; updated-map = {"a" 1, "b" 2}
-    updated-map))
-
-(defn ^{:doc "Transforms struct-map to soy structure"}
-  struct-map->soy [my-struct-map]
-  (let [my-map (reduce (fn [m k] (assoc m k (k my-struct-map))) {} (keys my-struct-map))] ;; Transforms struct-map to map
-    (map->soy my-map)))
 
 (defn ^{:doc "Builds and renders the soy-template.
 	Parameters:
@@ -39,7 +22,7 @@ returns {\"a\" 1, \"b\" 2}."}
   (let [tpl (soy/build template-file)]
     (soy/render tpl
 		template-ns
-		params)))
+		(SoyMapData. (walk/stringify-keys params)))))
 
 (defn ^{:doc "Renders an enclosing template (application template)
 and includes the child template.

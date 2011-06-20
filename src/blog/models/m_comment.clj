@@ -4,13 +4,10 @@
   (:require [clojure.contrib.sql :as sql]))
 
 (defn fetch-list [post-id]
-  (doall
-   (map struct-map->soy
-	(doall
-	 (sql/with-connection *db*
-	   (sql/with-query-results comment
-	     ["SELECT * FROM comment where post_id = ? order by id desc" (pint post-id)]
-	     (doall comment)))))))
+  (sql/with-connection *db*
+    (sql/with-query-results comments
+      ["SELECT * FROM comment where post_id = ? order by id desc" (pint post-id)]
+      (doall comments))))
 
 (defn create [comment]
   (sql/with-connection *db*
@@ -20,11 +17,10 @@
 			(pint (:post_id comment))])))
 
 (defn fetch [post-id id]
-  (struct-map->soy
-   (sql/with-connection *db*
-     (sql/with-query-results comment
-       ["SELECT * FROM comment where id = ? and post_id = ?" (pint id) (pint post-id)]
-       (first (doall comment))))))
+  (sql/with-connection *db*
+    (sql/with-query-results comment
+      ["SELECT * FROM comment where id = ? and post_id = ?" (pint id) (pint post-id)]
+      (first comment))))
 
 (defn update [comment]
   (sql/with-connection *db*

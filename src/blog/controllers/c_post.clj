@@ -13,7 +13,7 @@
   (let [editable (if (empty? (:user session)) false true)]
     (render-action post#index
 		   {:post_list (post/fetch-list)
-		    :extra (map->soy {:editable editable})})))
+		    :extra {:editable editable}})))
 
 ;; Action /post/new is requested via GET.
 ;; It checks whether the user is authenticated

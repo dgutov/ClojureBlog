@@ -5,12 +5,10 @@
 
 (defn fetch-list []
   (doall
-   (map struct-map->soy
-	(doall
-	 (sql/with-connection *db*
-	   (sql/with-query-results post
-	     ["SELECT * FROM post order by id desc"]
-	     (doall post)))))))
+   (sql/with-connection *db*
+     (sql/with-query-results posts
+       ["SELECT * FROM post order by id desc"]
+       (doall posts)))))
 
 (defn create [post]
   (sql/with-connection *db*
@@ -19,11 +17,10 @@
 			(:text post)])))
 
 (defn fetch [id]
-  (struct-map->soy
-   (sql/with-connection *db*
-     (sql/with-query-results post
-       ["SELECT * FROM post where id = ?" (pint id)]
-       (first post)))))
+  (sql/with-connection *db*
+    (sql/with-query-results post
+      ["SELECT * FROM post where id = ?" (pint id)]
+      (first post))))
 
 (defn update [post]
   (sql/with-connection *db*
