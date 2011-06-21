@@ -3,7 +3,8 @@
 	ring.adapter.jetty,
 	ring.util.response,
 	ring.middleware.session,
-	blog.system.utils)
+	blog.system.utils
+	blog.system.db)
   (:require [blog.controllers.c-post :as post]
 	    [blog.controllers.c-comment :as comment]
 	    [blog.controllers.c-user :as user]	    
@@ -35,11 +36,11 @@
   (route POST "/login" user/login)
   (route GET "/logout" user/logout)
   (route GET "/nologin" user/nologin)
-
   
   (route/resources "/")
   (route/not-found "Page not found"))
 
 (def app
   (-> (handler/site main-routes)
+      (wrap-db-access *db*)
       wrap-session))

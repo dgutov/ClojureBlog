@@ -3,7 +3,8 @@
   (:use ring.util.response,
 	compojure.core)
   (:require [clj-soy.template :as soy]
-            [clojure.walk :as walk])
+            [clojure.walk :as walk]
+            [clojure.contrib.sql :as sql])
   (:import com.google.template.soy.data.SoyMapData))
 
 (def ^{:doc "The name of the directory where the templates can be found"}
@@ -115,3 +116,10 @@ redirects to the home page."}
   parse-int [s]
   (try (Integer/parseInt s)
        (catch NumberFormatException e 0)))
+
+(defn ^{:doc "Database connection middleware"}
+  wrap-db-access
+  [handler db]
+  (fn [request]
+    (sql/with-connection db
+      (handler request))))
