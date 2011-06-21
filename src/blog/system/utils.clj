@@ -93,15 +93,13 @@ session, params and post_id."}
     `(defn ~name [{~params-hash :params, ~params :params,  ~session :session}]
        ~@body)))
 
-(defn ^{:doc "Updates the session while processing the POST-request.
+(defn ^{:doc "Updates the session in the response.
 	Parameters:
-	  session -- (hash-map) extra session parameters or updated session.
-	  response -- the result of \"redirect-to function.\""}
+	  session -- updated session parameters map
+	  response -- a Ring response map"}
   with-session [session response]
-  (merge response
-	 {:session
-	  (merge (response :session)
-		 session)}))
+  (update-in response [:session]
+             merge session))
 
 (defmacro ^{:doc "Checks whether there is non-empty :user field in the session.
 If there is such a field, then it evaluates the body. Otherwise it
